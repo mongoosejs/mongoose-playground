@@ -4,7 +4,7 @@ global.process = { env: {} };
 global.Buffer = require('buffer').Buffer;
 const util = require('util');
 
-const initialValue = `
+const defaultValue = `
 await mongoose.connect('mongodb://localhost:27017/mongoose_test');
 const schema = new mongoose.Schema({ name: String });
 const TestModel = mongoose.model('Test', schema);
@@ -18,21 +18,27 @@ const docs = await TestModel.find();
 console.log('Result', docs.map(doc => doc.toObject()));
 `.trim();
 
+const initialValue = window.location.hash ?
+  atob(window.location.hash.slice(1)) :
+  defaultValue;
+
 const input = CodeMirror(document.querySelector('#input'), {
   mode: 'javascript',
   lineNumbers: true,
   value: initialValue
 });
 
+input.setOption('extraKeys', {
+  'Shift-Enter': function() {
+    run();
+  }
+});
+
 const output = CodeMirror(document.querySelector('#output'), {
   mode: 'javascript',
   lineNumbers: true,
-  value: 'Output here'
+  value: ''
 });
-
-function tourl() {
-  window.location.hash = btoa(input.getValue());
-}
 
 require('mongoose/lib/driver').set(
   require('@mongoosejs/in-memory-driver')
@@ -62,10 +68,15 @@ document.querySelector('#run-button').addEventListener('click', () => {
   run();
 });
 
-document.querySelector('#copy-link-button').addEventListener('click', () => {
+const copyLinkButton = document.querySelector('#copy-link-button');
+copyLinkButton.addEventListener('click', () => {
   tourl();
   copyUrl();
+  copyLinkButton.textContent = 'Copied!';
+  setTimeout(() => copyLinkButton.textContent = 'Copy Link', 5000);
 });
+
+run();
 
 function copyUrl() {
   // get the container
@@ -89,4 +100,8 @@ async function run() {
   const value = input.getValue();
   await eval(`(async function() { ${value} })()`);
   output.setValue(logMessages.join('\n'));
+}
+
+function tourl() {
+  window.location.hash = btoa(input.getValue());
 }
