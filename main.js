@@ -38,9 +38,9 @@ require('mongoose/lib/driver').set(
   require('@mongoosejs/in-memory-driver')
 );
 
-const mongoose = require('mongoose/lib/mongoose');
+const _mongoose = require('mongoose/lib/mongoose');
 
-console.log('Mongoose version', mongoose.version);
+console.log('Mongoose version', _mongoose.version);
 
 let logMessages = [];
 const originalMethod = console.log;
@@ -85,6 +85,7 @@ function copyUrl() {
 
 async function run() {
   logMessages = [];
+  let mongoose = new _mongoose.Mongoose();
   const value = input.getValue();
   await eval(`(async function() { ${value} })()`);
   output.setValue(logMessages.join('\n'));
