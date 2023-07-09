@@ -40,16 +40,19 @@ const output = CodeMirror(document.querySelector('#output'), {
   value: ''
 });
 
+window.input = input;
+window.output = output;
+
 require('mongoose/lib/driver').set(
   require('@mongoosejs/in-memory-driver')
 );
 
 const _mongoose = require('mongoose/lib/mongoose');
+window._mongoose = _mongoose;
 
 console.log('Mongoose version', _mongoose.version);
 
-let logMessages = [];
-const originalMethod = console.log;
+const originalLog = console.log;
 // https://glebbahmutov.com/blog/capture-all-the-logs/
 // https://www.bayanbennett.com/posts/how-does-mdn-intercept-console-log-devlog-003/
 console.log = function() {
@@ -60,12 +63,29 @@ console.log = function() {
     messages.push(text);
   }
   const form = messages.join(" ");
-  logMessages.push(form);
-  originalMethod.apply(console, arguments);
-}
+  const currentValue = output.getValue();
+  output.setValue((currentValue ? currentValue + '\n' : '') + form);
+  originalLog.apply(console, arguments);
+};
+
+const originalError = console.error;
+// https://glebbahmutov.com/blog/capture-all-the-logs/
+// https://www.bayanbennett.com/posts/how-does-mdn-intercept-console-log-devlog-003/
+console.log = function() {
+  // messages.push(JSON.stringify(arguments[0])); // toString() causes [Object object]. No string conversion causes an error
+  const messages = [];
+  for (let i = 0; i < arguments.length; i++){
+    const text = util.inspect(arguments[i]);
+    messages.push(text);
+  }
+  const form = messages.join(" ");
+  const currentValue = output.getValue();
+  output.setValue((currentValue ? currentValue + '\n' : '') + form);
+  originalError.apply(console, arguments);
+};
 
 document.querySelector('#run-button').addEventListener('click', () => {
-  run();
+  setTimeout(() => main(), 0);
 });
 
 const copyLinkButton = document.querySelector('#copy-link-button');
@@ -76,7 +96,7 @@ copyLinkButton.addEventListener('click', () => {
   setTimeout(() => copyLinkButton.textContent = 'Copy Link', 5000);
 });
 
-run();
+setTimeout(() => main(), 0);
 
 function copyUrl() {
   // get the container
@@ -92,14 +112,6 @@ function copyUrl() {
   storage.setSelectionRange(0, 99999);
   document.execCommand('copy');
   body.removeChild(storage);
-}
-
-async function run() {
-  logMessages = [];
-  let mongoose = new _mongoose.Mongoose();
-  const value = input.getValue();
-  await eval(`(async function() { ${value} })()`);
-  output.setValue(logMessages.join('\n'));
 }
 
 function tourl() {
