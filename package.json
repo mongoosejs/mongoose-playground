@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "serve ./public"
+  },
   "devDependencies": {
     "@mongoosejs/in-memory-driver": "0.0.4",
     "assert-browserify": "^2.0.0",
