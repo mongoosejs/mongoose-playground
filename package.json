@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "node ./build",
     "start": "serve ./public"
   },
   "devDependencies": {
