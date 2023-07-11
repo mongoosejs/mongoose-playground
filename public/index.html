@@ -98,7 +98,7 @@
         let mongoose = new _mongoose.Mongoose();
         const value = input.getValue();
         try {
-          await eval(`(async function __userSpecifiedCode() { ${value} })()`);
+          await eval(`(async function __userSpecifiedCode() { ${value}\n })()`);
         } catch (err) {
           output.setValue(err.stack);
           throw err;
