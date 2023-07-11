@@ -3,7 +3,7 @@
 const { execSync } = require('child_process');
 const webpack = require('webpack');
 
-execSync('./node_modules/.bin/tailwindcss -o ./public/style.css');
+execSync('npm run tailwind');
 console.log('Compiled css');
 
 const config = {

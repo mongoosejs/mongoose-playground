@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "node ./build",
-    "start": "serve ./public"
+    "start": "serve ./public",
+    "tailwind": "tailwindcss -o ./public/style.css"
   },
   "devDependencies": {
     "@mongoosejs/in-memory-driver": "0.0.4",
