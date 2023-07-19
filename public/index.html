@@ -69,19 +69,6 @@
 
     <style>
 
-      #drag-container {
-        display: flex;
-        flex-direction: column;
-      }
-
-      #input {
-        height: 50%;
-      }
-
-      #output {
-        flex: 1;
-        height: 50%;
-      }
 
       #drag-bar {
         padding: 6px;
@@ -145,33 +132,43 @@
             toggleMenu();
           }
         });
-        const top = document.getElementById('input');
-        const bottom = document.getElementById('output');
-        const bar = document.getElementById('drag-bar');
-        const dragContainer = document.getElementById('drag-container');
-        const body = document.querySelector('body');
-        let dragEngaged = false;
+        
 
-        const drag = (e) => {
-          document.selection ? document.selection.empty() :
-          window.getSelection().removeAllRanges();
-          top.style.height = (e.clientY - (bar.offsetHeight/2)) + 'px';
-        };
-
-        bar.addEventListener('mousedown', () => {
-          dragEngaged = true;
-          document.addEventListener('mousemove', drag);
-        });
-
-        document.addEventListener('mouseup', () => {
-          if (dragEngaged) {
-            dragEngaged = false;
-            document.removeEventListener('mousemove', drag);
-          }
-        })
-
-        bar.addEventListener('mouseup', () => {
-          document.removeEventListener('mousemove', drag);
+        window.addEventListener('DOMContentLoaded', () => {
+          const dragBar = document.getElementById('drag-bar');
+          const inputDiv = document.getElementById('input');
+          const outputDiv = document.getElementById('output');
+          let isDragging = false;
+          let initialMouseY = 0;
+          let initialInputHeight = 0;
+          
+          dragBar.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            initialMouseY = e.clientY || e.pageY;
+            initialInputHeight = inputDiv.offsetHeight;
+          });
+          
+          document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+              const mouseY = e.clientY || e.pageY;
+              const containerTop = document.getElementById('drag-container').offsetTop;
+              const containerHeight = document.getElementById('drag-container').offsetHeight;
+              
+              const mouseMovementY = mouseY - initialMouseY;
+              const newInputHeight = Math.max(initialInputHeight + mouseMovementY, 0);
+              
+              const inputHeight = (newInputHeight / containerHeight) * 100;
+              const outputHeight = 100 - inputHeight;
+              
+              inputDiv.style.height = `${inputHeight}%`;
+              outputDiv.style.height = `${outputHeight}%`;
+            }
+          });
+          
+          document.addEventListener('mouseup', () => {
+            isDragging = false;
+          });
         });
 
         function toggleMenu() {
