@@ -60,12 +60,36 @@
         <button id="run-button" type="button" class="rounded-md bg-mongooseblue px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Run</button>
         <button id="copy-link-button" type="button" class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Copy Link</button>
       </div>
-      <div id="input" class="border-solid border-2 h-2/5"></div>
-
-      <div id="output" class="border-solid border-2 h-2/5"></div>
+      <div id="drag-container">
+        <div id="input" class="border-solid border-2 h-2/5"></div>
+        <div id="drag-bar"></div>
+        <div id="output" class="border-solid border-2 h-2/5"></div>
+      </div>
     </div>
 
     <style>
+
+      #drag-container {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column; /* ¯\_(ツ)_/¯ */
+      }
+
+      #input {
+        height: 50%;
+      }
+
+      #output {
+        flex: 1;
+        height: 50%;
+      }
+
+      #drag-bar {
+        padding: 6px;
+        cursor: row-resize;
+        background-color: silver;
+      }
+
       .carbonad{
         margin-top:0!important;
         margin-bottom:-3rem!important
@@ -121,6 +145,34 @@
           if (menuState === 'open' && ev.target !== nav && !nav.contains(ev.target)) {
             toggleMenu();
           }
+        });
+        const top = document.getElementById('input');
+        const bottom = document.getElementById('output');
+        const bar = document.getElementById('drag-bar');
+        const dragContainer = document.getElementById('drag-container');
+        const body = document.querySelector('body');
+        let dragEngaged = false;
+
+        const drag = (e) => {
+          document.selection ? document.selection.empty() :
+          window.getSelection().removeAllRanges();
+          top.style.height = (e.clientY - (bar.offsetHeight/2)) + 'px';
+        };
+
+        bar.addEventListener('mousedown', () => {
+          dragEngaged = true;
+          document.addEventListener('mousemove', drag);
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (dragEngaged) {
+            dragEngaged = false;
+            document.removeEventListener('mousemove', drag);
+          }
+        })
+
+        bar.addEventListener('mouseup', () => {
+          document.removeEventListener('mousemove', drag);
         });
 
         function toggleMenu() {
