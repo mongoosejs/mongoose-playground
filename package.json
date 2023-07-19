@@ -2,6 +2,7 @@
   "scripts": {
     "build": "node ./build",
     "start": "serve ./public",
+    "check": "node ./build && serve ./public",
     "tailwind": "tailwindcss -o ./public/style.css"
   },
   "devDependencies": {
