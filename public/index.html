@@ -60,15 +60,17 @@
         <button id="run-button" type="button" class="rounded-md bg-mongooseblue px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Run</button>
         <button id="copy-link-button" type="button" class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Copy Link</button>
       </div>
-      <div id="drag-container">
-        <div id="input" class="border-solid border-2 h-2/5"></div>
+      <div id="drag-container" class="h-[80vh]">
+        <div id="input" class="border-solid border-2 h-1/2"></div>
         <div id="drag-bar"></div>
-        <div id="output" class="border-solid border-2 h-2/5"></div>
+        <div id="output" class="border-solid border-2 h-1/2"></div>
       </div>
     </div>
 
     <style>
-
+      .CodeMirror {
+        font-size: 14px;
+      }
 
       #drag-bar {
         padding: 6px;
